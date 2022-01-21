@@ -22,10 +22,15 @@ Have a nice game!
 
 
 ## Building
-For Linux and Windows
+For Linux
 ````shell
 g++ main.cpp -o PacMacieson
 ````
+For Windows
+````shell
+g++ main.cpp -o PacMacieson.exe
+````
+Use PowerShell to play the game on Windows to get better performance
 
 ## To-Do
 * [ ] Colored output
@@ -33,3 +38,5 @@ g++ main.cpp -o PacMacieson
 * [ ] Bigger scalability
 * [ ] Translation of code
 * [ ] Better enemy algorithms
+* [ ] Generating random maps
+* [ ] More levels

@@ -51,6 +51,7 @@ void sleep(int ms)
 #define KEY_LEFT 77
 #define ESCAPE 27
 
+#if defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__) || defined(__APPLE__)
 #define ESC "\033"
 #define UP "\033[A"
 #define DOWN "\033[B"
@@ -104,6 +105,7 @@ bool kbhit(){
 bool keydown(const char* key){
     return !strcmp(kbhitChar, key);
 }
+#endif
 
 bool ButtonClickOnSystems(int button)
 {
