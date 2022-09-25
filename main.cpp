@@ -2,21 +2,18 @@
 #include <fstream>
 #include <time.h>
 #include <sstream>
-
+#include <signal.h>
+#include <stdio.h>
 #if defined _WIN32
 #include <windows.h>
-#elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__) || defined(__APPLE__)
-#include "stdio.h"
+#elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
 #include <signal.h>
-#include <chrono>
 #include <thread>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <poll.h>
 #include <termios.h>
-#include <sys/ioctl.h>
 #endif
 
 using namespace std;
@@ -25,7 +22,7 @@ void Clear()
 {
 #if defined _WIN32
 	system("cls");
-#elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__) || defined(__APPLE__)
+#elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
 	system("clear");
 #endif
 }
@@ -34,7 +31,7 @@ void sleep(int ms)
 {
 #if defined _WIN32
 	Sleep(ms);
-#elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__) || defined(__APPLE__)
+#elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
 	this_thread::sleep_for(std::chrono::milliseconds(ms));
 #endif
 }
@@ -45,13 +42,7 @@ void sleep(int ms)
 #define left 4
 #define escape 5
 
-#define KEY_UP 72
-#define KEY_DOWN 80
-#define KEY_RIGHT 75
-#define KEY_LEFT 77
-#define ESCAPE 27
-
-#if defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
 #define ESC "\033"
 #define UP "\033[A"
 #define DOWN "\033[B"
@@ -79,10 +70,6 @@ void term_setup(void (*sighandler)(int)){
     tcgetattr(0, &curtio);
     curtio.c_lflag &= ~(ICANON | ECHO);
     tcsetattr(0, TCSANOW, &curtio);
-}
-
-void term_restore(){
-    tcsetattr(0, TCSANOW, &oldtio);
 }
 
 static char kbhitChar[4]= {0};
@@ -114,23 +101,18 @@ bool ButtonClickOnSystems(int button)
 	{
 	case up:
 		return GetAsyncKeyState(VK_UP);
-		break;
 	case right:
 		return GetAsyncKeyState(VK_RIGHT);
-		break;
 	case down:
 		return GetAsyncKeyState(VK_DOWN);
-		break;
 	case left:
 		return GetAsyncKeyState(VK_LEFT);
-		break;
 	case escape:
 		return GetAsyncKeyState(VK_ESCAPE);
-		break;
 	default:
 		return false;
 	}
-#elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__) || defined(__APPLE__)
+#elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
 	switch (button)
 	{
 	case up:
@@ -181,13 +163,12 @@ clock_t currentTime, previousFrame;
 int deltaTime;
 bool bGranie = true;
 
-// WINDOWS
 static sig_atomic_t finish = 0;
 static void sighandler(int signo)
 {
 	finish = 1;
 	bGranie = false;
-	printf("good bye!\n");
+	printf("Good bye!\n");
 }
 
 class Player
@@ -212,10 +193,8 @@ public:
 	}
 	void ZmienPozycje(int pozX, int pozY) // Zmień pozycję, jeśli X i Y są większe lub równe 0
 	{
-		if (pozX >= 0)
-			X = pozX;
-		if (pozY >= 0)
-			Y = pozY;
+		if (pozX >= 0) X = pozX;
+		if (pozY >= 0) Y = pozY;
 	}
 	void SprawdzMape(int pozX, int pozY, int przeciwnik) // Fragment liczący punkty, buffy i zderzenie z duszkiem
 	{
@@ -306,15 +285,15 @@ public:
 	{
 		if (buff == true || debuff == true)
 		{
-			PozostalyCzas = PozostalyCzas - deltaTime; // Odejmij czas co każde wykonanie
+			PozostalyCzas = PozostalyCzas - (currentTime - previousFrame); // Odejmij czas co każde wykonanie
 		}
 
 		iTablicaMapy[Y][X] = GRACZ;
-		Delta += currentTime - previousFrame;
 
-		if (speed * 50 < Delta)
+		Delta += currentTime - previousFrame; // Dodaje różnicę czasu między klatkami
+		if (speed * 100 < Delta)			  // Jeżeli prędkość * 100 jest mniejsza niż delta
 		{
-			#if defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__) || defined(__APPLE__)
+			#if defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
 			kbhit();
 			#endif
 
@@ -646,7 +625,7 @@ int main()
 {
 	while (!finish)
 	{
-		#if defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__) || defined(__APPLE__)
+		#if defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
 		term_setup(sighandler);
 		#endif
 
@@ -659,7 +638,6 @@ int main()
 		map.NumerMapy = 1;
 		map.WczytywanieMapyZPliku();
 		map.LosowaniePozycjiPunktow();
-		// map.ZapisywanieMapyDoPliku();
 
 		// Postacie
 		Duch duch[iloscDuchow];
@@ -670,10 +648,6 @@ int main()
 		}
 
 		Player gracz(3, 1, 5);
-		currentTime = clock();
-		previousFrame = clock();
-
-		// SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 
 		cout << "______         ___  ___           _                       \n";
 		cout << "| ___ \\        |  \\/  |          (_)                      \n";
@@ -772,7 +746,7 @@ int main()
 				cout << duch[i].speed << " ";
 			}
 			cout << "\n";
-			sleep(35);
+			sleep(16);
 		}
 		Clear();
 		cout << " _____                        _____                 \n";
@@ -794,8 +768,8 @@ int main()
 		Clear();
 		main();
 	}
-#if defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__) || defined(__APPLE__)
-	term_restore();
+#if defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
+	tcsetattr(0, TCSANOW, &oldtio);
 #endif
 	return 0;
 }

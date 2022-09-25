@@ -7,6 +7,7 @@ ______         ___  ___           _
 | | | (_| | (__| |  | | (_| | (__| |  __/\__ \ (_) | | | |
 \_|  \__,_|\___\_|  |_/\__,_|\___|_|\___||___/\___/|_| |_|
 
+DANGER! AN INCREDIBLY TRAGIC CODE WRITTEN BY ME YEARS AGO
 ````
 ![Alt text](https://maciej.ml/projects/pacmacieson/pacmacieson.png)
 
