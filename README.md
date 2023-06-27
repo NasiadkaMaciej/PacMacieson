@@ -9,7 +9,7 @@ ______         ___  ___           _
 
 DANGER! AN INCREDIBLY TRAGIC CODE WRITTEN BY ME YEARS AGO
 ````
-![Alt text](https://maciej.ml/projects/pacmacieson/pacmacieson.png)
+![Alt text](https://nasiadka.pl/projects/pacmacieson/pacmacieson.png)
 
 
 PacMacieson is small console game written in C++.
